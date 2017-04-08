@@ -27,3 +27,17 @@
 *.exe
 *.out
 *.app
+
+# Intermediate files
+Build
+
+# Qt moc
+GeneratedFiles
+
+# virsual studio project
+*.sdf
+*.user
+*.filters
+*.suo
+*.opensdf
+*.ncb
