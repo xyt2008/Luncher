@@ -1,3 +1,11 @@
+/*  	
+ *@file   Luncher.h
+ *@brief  brief  description  
+ *@author louyk
+ *@date   2017/04/08
+ *@version V0.1.0
+ *@note   客户端程序主窗口
+ */
 #ifndef LUNCHER_H
 #define LUNCHER_H
 

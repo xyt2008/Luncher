@@ -3,7 +3,7 @@
  *@brief  brief  description  
  *@author louyk
  *@date   2017/03/28
- *@version 1.0.0
+ *@version V0.1.0
  *@note   新连接的线程
  */
 #ifndef CONNTHREAD_H
@@ -11,7 +11,7 @@
 
 #include <QThread>
 #include <QTcpSocket>
-#include "SocketInstant.h"
+#include "NetCore/Client.h"
 
 class ConnThread : public QThread
 {
@@ -33,7 +33,7 @@ signals:
 	void signalMessage(const QString& strMsg);
 
 private:
-	SocketInstant m_Socket;
+	Client m_Socket;
 };
 
 #endif // CONNTHREAD_H

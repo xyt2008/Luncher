@@ -3,7 +3,6 @@
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
-#include "Global.h"
 #include "FileUtils.h"
 
 Client::Client(QObject *parent)
@@ -16,6 +15,7 @@ Client::Client(QObject *parent)
 	m_iReceiveSize = 0;
 	m_bIsHeadMsg = false;
 
+	m_strFileName.clear();
 	m_pFileWrite = 0;
 	m_pFileRead = 0;
 }
@@ -36,7 +36,7 @@ void Client::setSocket(QTcpSocket* socket)
 	connect(m_pSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotWritten(qint64)));
 }
 
-Client::ConnState Client::getState()
+ConnState Client::getState()
 {
 	return m_enState;
 }
@@ -73,6 +73,7 @@ void Client::slotReadRady()
 			m_iTotalSize = 0;
 			m_bIsHeadMsg = false;
 			emit signalFinishedDownloadFile(m_strFileName);
+			m_strFileName.clear();
 		}
 	}
 }
@@ -85,13 +86,16 @@ void Client::slotWritten(qint64 byte)
 	if(m_iToWriteSize > 0)
 	{
 		// 每次发送m_iPageSize大小的数据，这里设置为8KB，如果剩余的数据不足8KB，
-		// 就发送剩余数据的大小
 		// 发送完一次数据后还剩余数据的大小
 		m_iToWriteSize -= (int)m_pSocket->write(m_pFileWrite->read(qMin(m_iToWriteSize, m_iPageSize)));
 	}
 
-	if(m_iWrittenSize == m_iTotalSize) //发送完毕
+	if(m_iWrittenSize == m_iTotalSize)
 	{
+		//发送完毕
+		m_iTotalSize = 0;
+		m_iWrittenSize = 0;
+		m_iToWriteSize = 0;
 		m_pFileWrite->close();
 		m_pFileWrite = 0;
 	}

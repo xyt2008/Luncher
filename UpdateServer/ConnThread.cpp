@@ -1,4 +1,5 @@
 #include "ConnThread.h"
+#include "NetCore/Global.h"
 
 ConnThread::ConnThread(QTcpSocket* socket, QObject *parent)
 	: QThread(parent)
@@ -15,7 +16,8 @@ ConnThread::~ConnThread()
 
 void ConnThread::run()
 {
-	while(SocketInstant::Conn_DisConn != m_Socket.getState())
+	ConnState state = Conn_DisConn;
+	while(state != m_Socket.getState())
 	{
 		continue;
 	}

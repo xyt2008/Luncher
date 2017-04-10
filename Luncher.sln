@@ -6,6 +6,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetCore", "NetCore\NetCore.vcproj", "{A08064B8-73DC-49DF-A114-B1089B5F0AFD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateServer", "UpdateServer\UpdateServer.vcproj", "{A880050C-B8B9-4676-8E4B-BE4B95C0604B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A08064B8-73DC-49DF-A114-B1089B5F0AFD} = {A08064B8-73DC-49DF-A114-B1089B5F0AFD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

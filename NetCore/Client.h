@@ -3,7 +3,7 @@
  *@brief  brief  description  
  *@author louyk
  *@date   2017/03/29
- *@version 1.0.0
+ *@version V0.1.0
  *@note   ¿Í»§¶ËÊµÀý
  */
 #ifndef NETCORE_CLIENT_H
@@ -11,25 +11,18 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include "Export.h"
+#include "Global.h"
 
 class QFile;
 
-class Client : public QObject
+class NETCORE_EXPORT Client : public QObject
 {
 	Q_OBJECT
 
 public:
 	Client(QObject *parent = 0);
 	~Client();
-
-	enum ConnState{
-		Conn_Init,
-		Conn_Read,
-		Conn_Write,
-		Conn_Conn,
-		Conn_DisConn,
-		Conn_End
-	};
 
 	void setSocket(QTcpSocket* socket);
 	ConnState getState();
