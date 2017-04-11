@@ -9,10 +9,12 @@
 #ifndef LUNCHER_H
 #define LUNCHER_H
 
-#include <QtGui/QMainWindow>
+#include <QDialog>
 #include "ui_Luncher.h"
 
-class Luncher : public QMainWindow
+class Client;
+
+class Luncher : public QDialog
 {
 	Q_OBJECT
 
@@ -20,8 +22,14 @@ public:
 	Luncher(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~Luncher();
 
+private slots:
+	void slotConnectToServer();
+	void slotCheckeUpdate();
+	void slotFinishedDownFile(const QString& file);
+
 private:
 	Ui::LuncherClass ui;
+	Client* m_pClient;
 };
 
 #endif // LUNCHER_H

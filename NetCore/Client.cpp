@@ -18,6 +18,7 @@ Client::Client(QObject *parent)
 	m_strFileName.clear();
 	m_pFileWrite = 0;
 	m_pFileRead = 0;
+	m_pSocket = 0;
 }
 
 Client::~Client()
@@ -39,6 +40,14 @@ void Client::setSocket(QTcpSocket* socket)
 ConnState Client::getState()
 {
 	return m_enState;
+}
+
+void Client::connectToHost(const QString& addr, int port)
+{
+	if (!addr.isEmpty() && m_pSocket != 0)
+	{
+		m_pSocket->connectToHost(QHostAddress(addr), port);
+	}
 }
 
 void Client::slotConnect()
@@ -65,7 +74,11 @@ void Client::slotReadRady()
 	}
 	else
 	{
-		m_iReceiveSize += m_pFileRead->write(baData);
+		if (m_iTotalSize > 0)
+		{
+			m_iReceiveSize += m_pFileRead->write(baData);
+		}
+
 		if (m_iReceiveSize >= m_iTotalSize)
 		{
 			m_pFileRead->close();
@@ -120,7 +133,7 @@ void Client::sendFile(const QString& file)
 	/*
 	 数据头数据信息，格式：
 	 Push:File
-	 FileName:xxxx.txt
+	 Value:xxxx.txt
 	 ContentLength:12345456
 	 */
 	QString strContent = QString("%1:%2\r\n"
@@ -132,6 +145,30 @@ void Client::sendFile(const QString& file)
 								.arg(QString(g_strLength)).arg(QString::number(m_iTotalSize));
 
 	m_pSocket->write(strContent.toLocal8Bit().data());
+}
+
+void Client::getFile(const QString& file)
+{
+	/*
+	 数据头数据信息，格式：
+	 Pull:File
+	 Value:xxxx.txt
+	 */
+	QString strContent = QString("%1:%2\r\n"
+								"%3:%4\r\n"
+								"\r\n")
+								.arg(QString(g_strPull)).arg(QString(g_strFile))
+								.arg(QString(g_strValue)).arg(file);
+
+	m_pSocket->write(strContent.toLocal8Bit().data());
+}
+
+void Client::sendData(const QString& data)
+{
+	if (!data.isEmpty())
+	{
+		m_pSocket->write(data.toLocal8Bit().data());
+	}
 }
 
 void Client::dispatchHead(const QByteArray& baData)
@@ -196,6 +233,17 @@ void Client::dispatchHead(const QByteArray& baData)
 					if (!m_byteArray.isEmpty())
 					{
 						m_iReceiveSize += m_pFileRead->write(m_byteArray);
+						if (m_iReceiveSize >= m_iTotalSize)
+						{
+							m_pFileRead->close();
+							m_pFileRead = 0;
+							m_iTotalSize = 0;
+							m_bIsHeadMsg = false;
+							emit signalFinishedDownloadFile(m_strFileName);
+							m_strFileName.clear();
+
+							return;
+						}
 					}
 				}			
 			}
@@ -225,6 +273,9 @@ void Client::dispatchHead(const QByteArray& baData)
 			if (!strFileName.isEmpty())
 			{
 				sendFile(strFileName);
+				m_bIsHeadMsg = false;
+
+				return;
 			}
 		}
 		else if (strState == QString(g_strData))

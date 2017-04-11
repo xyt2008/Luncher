@@ -27,6 +27,11 @@ public:
 	void setSocket(QTcpSocket* socket);
 	ConnState getState();
 
+	void connectToHost(const QString& addr, int port);
+	void sendFile(const QString& file);
+	void getFile(const QString& file);
+	void sendData(const QString& data);
+
 private slots:
 	void slotConnect();
 	void slotDisConnect();
@@ -34,7 +39,6 @@ private slots:
 	void slotWritten(qint64 byte);
 
 private:
-	void sendFile(const QString& file);
 	void dispatchHead(const QByteArray& baData);
 	
 signals:

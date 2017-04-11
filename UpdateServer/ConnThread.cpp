@@ -5,8 +5,8 @@ ConnThread::ConnThread(QTcpSocket* socket, QObject *parent)
 	: QThread(parent)
 {
 	m_Socket.setSocket(socket);
-	connect(&m_Socket, SIGNAL(signalErrorP(QTcpSocket::SocketError)), this, SLOT(slotError(QTcpSocket::SocketError)));
-	connect(&m_Socket, SIGNAL(signalMessageP(const QString&)), this, SLOT(slotMessage(const QString&)));
+	connect(&m_Socket, SIGNAL(signalError(QTcpSocket::SocketError)), this, SLOT(slotError(QTcpSocket::SocketError)));
+	connect(&m_Socket, SIGNAL(signalMessage(const QString&)), this, SLOT(slotMessage(const QString&)));
 }
 
 ConnThread::~ConnThread()

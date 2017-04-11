@@ -57,9 +57,5 @@ void UpdateServer::slotLookHost(const QHostInfo& info)
 				.arg(addr.toString())
 				.arg(m_pServer->serverPort()));
 		}
-// 		QHostAddress address = info.addresses().first();
-// 		ui.textEdit->append(QString::fromLocal8Bit("·þÎñÆ÷IP:%1, port:%2")
-// 			.arg(address.toString())
-// 			.arg(m_pServer->serverPort()));
 	}
 }
