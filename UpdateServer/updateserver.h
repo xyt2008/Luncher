@@ -22,6 +22,8 @@ public:
 	UpdateServer(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~UpdateServer();
 
+	void initFileInfo();
+
 private slots:
 	void slotLookHost(const QHostInfo& info);
 

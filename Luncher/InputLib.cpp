@@ -6,3 +6,5 @@
  *@version 3.0.1
  *@note   依赖库统一位置处
  */
+
+#pragma comment(lib, "NetCore.lib")

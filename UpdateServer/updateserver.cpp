@@ -1,5 +1,8 @@
 #include "updateserver.h"
 #include <QNetworkInterface>
+#include "NetCore/UpdataXml.h"
+#include "NetCore/FileUtils.h"
+#include "NetCore/SingleTon.h"
 
 UpdateServer::UpdateServer(QWidget *parent, Qt::WFlags flags)
 	: QDialog(parent, flags)
@@ -37,6 +40,11 @@ UpdateServer::UpdateServer(QWidget *parent, Qt::WFlags flags)
 UpdateServer::~UpdateServer()
 {
 
+}
+
+void UpdateServer::initFileInfo()
+{
+	SingleTon<UpdataXml>::ins()->praseXmlFile(FileUtils::ins()->getApplicationPath("updatalist.xml"));
 }
 
 void UpdateServer::slotLookHost(const QHostInfo& info)

@@ -128,7 +128,7 @@ void Client::sendFile(const QString& file)
 								"%5:%6\r\n"
 								"\r\n")
 								.arg(QString(g_strPush)).arg(QString(g_strFile))
-								.arg(QString(g_strFileName)).arg(file)
+								.arg(QString(g_strValue)).arg(file)
 								.arg(QString(g_strLength)).arg(QString::number(m_iTotalSize));
 
 	m_pSocket->write(strContent.toLocal8Bit().data());
@@ -162,11 +162,11 @@ void Client::dispatchHead(const QByteArray& baData)
 		if (strState == QString(g_strFile))
 		{
 			// 接收类型：文件
-			nPos = head.indexOf(g_strFileName);
+			nPos = head.indexOf(g_strValue);
 			if (-1 != nPos)
 			{
 				rPos = head.indexOf(g_strEnding, nPos);
-				strFileName = head.mid(nPos + strlen(g_strFileName) + 1, rPos - nPos - strlen(g_strFileName) - 1);
+				strFileName = head.mid(nPos + strlen(g_strValue) + 1, rPos - nPos - strlen(g_strValue) - 1);
 			}
 			nPos = head.indexOf(g_strLength);
 			if (-1 != nPos)
@@ -215,11 +215,11 @@ void Client::dispatchHead(const QByteArray& baData)
 		if (strState == QString(g_strFile))
 		{
 			// 发送类型：文件
-			nPos = head.indexOf(g_strFileName);
+			nPos = head.indexOf(g_strValue);
 			if (-1 != nPos)
 			{
 				rPos = head.indexOf(g_strEnding, nPos);
-				strFileName = head.mid(nPos + strlen(g_strFileName) + 1, rPos - nPos - strlen(g_strFileName) - 1);
+				strFileName = head.mid(nPos + strlen(g_strValue) + 1, rPos - nPos - strlen(g_strValue) - 1);
 			}
 			
 			if (!strFileName.isEmpty())

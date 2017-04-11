@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Luncher", "Luncher\Luncher.vcproj", "{56ACED9B-BF31-4D3F-A5B9-B17ACE6660CA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A08064B8-73DC-49DF-A114-B1089B5F0AFD} = {A08064B8-73DC-49DF-A114-B1089B5F0AFD}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetCore", "NetCore\NetCore.vcproj", "{A08064B8-73DC-49DF-A114-B1089B5F0AFD}"
 EndProject
