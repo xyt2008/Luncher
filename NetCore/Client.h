@@ -44,6 +44,7 @@ private:
 signals:
 	void signalError(QTcpSocket::SocketError socketError);
 	void signalMessage(const QString& strMsg);
+	void signalReceiveSize(qint64 size);
 	void signalFinishedDownloadFile(const QString& strFile);
 
 private:

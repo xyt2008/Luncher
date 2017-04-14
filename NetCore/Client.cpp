@@ -65,8 +65,6 @@ void Client::slotDisConnect()
 
 void Client::slotReadRady()
 {
-	m_enState = Conn_Read;
-
 	QByteArray baData = m_pSocket->readAll();
 	if (!m_bIsHeadMsg)
 	{
@@ -76,7 +74,9 @@ void Client::slotReadRady()
 	{
 		if (m_iTotalSize > 0)
 		{
-			m_iReceiveSize += m_pFileRead->write(baData);
+			qint64 count = m_pFileRead->write(baData);
+			m_iReceiveSize += count;
+			emit signalReceiveSize(count);
 		}
 
 		if (m_iReceiveSize >= m_iTotalSize)
@@ -87,6 +87,7 @@ void Client::slotReadRady()
 			m_bIsHeadMsg = false;
 			emit signalFinishedDownloadFile(m_strFileName);
 			m_strFileName.clear();
+			m_enState = Conn_End;
 		}
 	}
 }
@@ -111,6 +112,8 @@ void Client::slotWritten(qint64 byte)
 		m_iToWriteSize = 0;
 		m_pFileWrite->close();
 		m_pFileWrite = 0;
+
+		m_enState = Conn_End;
 	}
 }
 
@@ -145,6 +148,8 @@ void Client::sendFile(const QString& file)
 								.arg(QString(g_strLength)).arg(QString::number(m_iTotalSize));
 
 	m_pSocket->write(strContent.toLocal8Bit().data());
+
+	m_enState = Conn_Write;
 }
 
 void Client::getFile(const QString& file)
@@ -161,6 +166,7 @@ void Client::getFile(const QString& file)
 								.arg(QString(g_strValue)).arg(file);
 
 	m_pSocket->write(strContent.toLocal8Bit().data());
+	m_enState = Conn_Read;
 }
 
 void Client::sendData(const QString& data)
@@ -225,27 +231,32 @@ void Client::dispatchHead(const QByteArray& baData)
 					info.dir().mkpath(info.absolutePath());
 				}
 
+				m_strFileName = strFileName;
 				if (m_pFileRead == 0)
 				{
-					m_strFileName = strFileName;
-					m_pFileRead = new QFile(strFile.append(".temp"));
-					m_pFileRead->open(QIODevice::WriteOnly);
-					if (!m_byteArray.isEmpty())
-					{
-						m_iReceiveSize += m_pFileRead->write(m_byteArray);
-						if (m_iReceiveSize >= m_iTotalSize)
-						{
-							m_pFileRead->close();
-							m_pFileRead = 0;
-							m_iTotalSize = 0;
-							m_bIsHeadMsg = false;
-							emit signalFinishedDownloadFile(m_strFileName);
-							m_strFileName.clear();
+					m_pFileRead = new QFile();
+				}
 
-							return;
-						}
+				m_pFileRead->setFileName(strFile.append(".temp"));
+				m_pFileRead->open(QIODevice::WriteOnly);
+				if (!m_byteArray.isEmpty())
+				{
+					qint64 count = m_pFileRead->write(m_byteArray);
+					m_iReceiveSize += count;
+					emit signalReceiveSize(count);
+					if (m_iReceiveSize >= m_iTotalSize)
+					{
+						m_pFileRead->close();
+						m_pFileRead = 0;
+						m_iTotalSize = 0;
+						m_bIsHeadMsg = false;
+						emit signalFinishedDownloadFile(m_strFileName);
+						m_strFileName.clear();
+
+						m_enState = Conn_End;
+						return;
 					}
-				}			
+				}
 			}
 		}
 		else if (strState == QString(g_strData))

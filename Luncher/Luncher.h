@@ -10,6 +10,7 @@
 #define LUNCHER_H
 
 #include <QDialog>
+#include "NetCore/Global.h"
 #include "ui_Luncher.h"
 
 class Client;
@@ -26,10 +27,17 @@ private slots:
 	void slotConnectToServer();
 	void slotCheckeUpdate();
 	void slotFinishedDownFile(const QString& file);
+	void slotReceiveSize(qint64 size);
+
+private:
+	void downloadFile(int count);
 
 private:
 	Ui::LuncherClass ui;
 	Client* m_pClient;
+	std::map<QString, FileList> m_mapUpdateList;
+	qint64 m_iTotalSize;
+	qint64 m_iReciveSize;
 };
 
 #endif // LUNCHER_H

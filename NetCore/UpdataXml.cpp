@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QTextStream>
 
 UpdataXml::UpdataXml()
 {
@@ -80,6 +81,35 @@ bool UpdataXml::praseXmlFile(const QString& fileName)
 bool UpdataXml::writeXmlFile(const QString& fileName, const QString& version,
 							 const std::map<QString, FileList>& filelist)
 {
+	if (fileName.isEmpty() || filelist.size() <= 0)
+	{
+		m_strError = QString::fromLocal8Bit("写入的文件名或者内容不能为空！");
+		return false;
+	}
+
+	QFile file(fileName);
+	if (!file.open(QFile::WriteOnly | QFile::Text))
+	{
+		m_strError = QString::fromLocal8Bit("文件:%1打开失败，无法写入！");
+		return false;
+	}
+
+	QDomDocument document;
+	// app version
+	QDomElement versionElem = document.createElement("app");
+	document.appendChild(versionElem);
+	versionElem.setAttribute("version", version);
+
+	// files
+	QDomElement filesElem = document.createElement("files");
+	versionElem.appendChild(filesElem);
+
+	// file
+
+	QTextStream out(&file);
+	document.save(out,3);
+	file.close();
+
 	return true;
 }
 
