@@ -14,6 +14,8 @@
 #include "ui_updateserver.h"
 #include "TCPServer.h"
 
+class MakeList;
+
 class UpdateServer : public QDialog
 {
 	Q_OBJECT
@@ -25,11 +27,16 @@ public:
 	void initFileInfo();
 
 private slots:
+	void slotMakeList();
 	void slotLookHost(const QHostInfo& info);
+
+private:
+	void initServerSocket();
 
 private:
 	Ui::UpdateServerClass ui;
 	TCPServer* m_pServer;
+	MakeList* m_pMakeList;
 };
 
 #endif // UPDATESERVER_H

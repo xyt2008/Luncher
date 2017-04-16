@@ -105,9 +105,27 @@ bool UpdataXml::writeXmlFile(const QString& fileName, const QString& version,
 	versionElem.appendChild(filesElem);
 
 	// file
+	std::map<QString, FileList>::const_iterator iter = filelist.begin();
+	for (; iter != filelist.end(); ++iter)
+	{
+		QDomElement fileElem = document.createElement("file");
+		filesElem.appendChild(fileElem);
+
+		QDomElement fileName = document.createElement(g_strXmlFile);
+		fileElem.appendChild(fileName);
+		fileName.setAttribute(g_strXmlFile, iter->first);
+
+		QDomElement sizeElem = document.createElement(g_strFileSize);
+		fileElem.appendChild(sizeElem);
+		sizeElem.setAttribute(g_strFileSize, iter->second.m_fSize);
+
+		QDomElement md5Elem = document.createElement(g_strFileMd5);
+		fileElem.appendChild(md5Elem);
+		md5Elem.setAttribute(g_strFileMd5, iter->second.m_strMd5);
+	}
 
 	QTextStream out(&file);
-	document.save(out,3);
+	document.save(out, 3);
 	file.close();
 
 	return true;
