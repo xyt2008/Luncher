@@ -16,7 +16,7 @@ ConnThread::~ConnThread()
 
 void ConnThread::run()
 {
-	ConnState state = Conn_DisConn;
+	ConnState state = Conn_End;
 	while(state != m_Socket.getState())
 	{
 		continue;

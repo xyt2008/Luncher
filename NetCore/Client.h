@@ -40,6 +40,7 @@ private slots:
 
 private:
 	void dispatchHead(const QByteArray& baData);
+	void downLoadFinished();
 	
 signals:
 	void signalError(QTcpSocket::SocketError socketError);

@@ -14,6 +14,7 @@
 #include "ui_Luncher.h"
 
 class Client;
+class DownLoad;
 
 class Luncher : public QDialog
 {
@@ -35,6 +36,7 @@ private:
 private:
 	Ui::LuncherClass ui;
 	Client* m_pClient;
+	DownLoad* m_pDownLoad;
 	std::map<QString, FileList> m_mapUpdateList;
 	qint64 m_iTotalSize;
 	qint64 m_iReciveSize;

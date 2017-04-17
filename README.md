@@ -18,13 +18,14 @@
 采用xml文件存储更新文件的列表，格式如下：
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<app version="1.0.0">
+<app version="3.0.1">
     <files>
-        <file>
-           <name>文件1.txt</name>
-           <size>12598</size>
-           <md5>0ca168b9c0f726a235d895e269332461</md5>
-        </file>
+      <file size="1" md5="X1" name="1"/>
+      <file size="2" md5="X2" name="2"/>
+      <file size="3" md5="X3" name="3"/>
+      <file size="4" md5="X4" name="4"/>
+      <file size="5" md5="X5" name="5"/>
+      <file size="6" md5="X6" name="6"/>
     </files>
 </app>
 ```

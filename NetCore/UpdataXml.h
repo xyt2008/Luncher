@@ -65,7 +65,6 @@ public:
 	QString getLastError();
 
 private:
-	void readFileDom(const QDomElement& parant);
 
 private:
 	std::map<QString, FileList> m_mapFileList;

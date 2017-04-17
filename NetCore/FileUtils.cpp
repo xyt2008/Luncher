@@ -62,3 +62,34 @@ QString FileUtils::getScenePath(const QString& name)
 {
 	return m_strSceneRoot + name;
 }
+
+QString FileUtils::getFileSize(qint64 size)
+{
+	QString strSize;
+	if (size > 1024)
+	{
+		float sizeCount = size / 1024.0;
+		if (sizeCount > 1024)
+		{
+			sizeCount /= 1024.0;
+			if (sizeCount > 1024)
+			{
+				strSize = QString("%1 GB").arg(QString::number(sizeCount / 1024.0, 'f', 2));
+			}
+			else
+			{
+				strSize = QString("%1 MB").arg(QString::number(sizeCount, 'f', 2));
+			}
+		}
+		else
+		{
+			strSize = QString("%1 KB").arg(QString::number(sizeCount, 'f', 2));
+		}
+	}
+	else
+	{
+		strSize = QString("1 KB");
+	}
+
+	return strSize;
+}

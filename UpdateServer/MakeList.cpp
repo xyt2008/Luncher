@@ -2,6 +2,8 @@
 #include <QFileDialog>
 #include <QCryptographicHash>
 #include <QDirIterator>
+#include "NetCore/UpdataXml.h"
+#include "NetCore/FileUtils.h"
 
 MakeList::MakeList(QWidget *parent)
 	: QDialog(parent)
@@ -34,13 +36,28 @@ void MakeList::slotBrowse()
 		ui.lineEditDir->setText(strDir);
 		
 		m_strBaseDir = strDir;
+		FileUtils::ins()->initScene(m_strBaseDir);
 		getDirFiles(strDir);
 	}
 }
 
 void MakeList::slotMakeList()
 {
+	std::map<QString, FileList> mapList;
+	for (int i = 0; i < ui.tableWidget->rowCount(); ++i)
+	{
+		FileList list;
+		list.m_fSize = ui.tableWidget->item(i, 1)->data(Qt::UserRole).toULongLong();
+		list.m_strMd5 = ui.tableWidget->item(i, 2)->text();
 
+		mapList[ui.tableWidget->item(i, 0)->text()] = list;
+	}
+
+	if (mapList.size() > 0)
+	{
+		UpdataXml xml;
+		xml.writeXmlFile(m_strBaseDir + "\\updatalist.xml", ui.lineEditVersion->text(), mapList);
+	}
 }
 
 void MakeList::slotMakeMd5()
@@ -96,32 +113,7 @@ void MakeList::getDirFiles(const QString& strDir)
 			// 把文件大小填充到表格第1列
 			pItem = new QTableWidgetItem;
 			qint64 size = info.size();
-			QString strSize;
-			if (size > 1024)
-			{
-				float sizeCount = size / 1024.0;
-				if (sizeCount > 1024)
-				{
-					sizeCount /= 1024.0;
-					if (sizeCount > 1024)
-					{
-						strSize = QString("%1 Gb").arg(QString::number(sizeCount / 1024.0, 'f', 2));
-					}
-					else
-					{
-						strSize = QString("%1 Mb").arg(QString::number(sizeCount, 'f', 2));
-					}
-				}
-				else
-				{
-					strSize = QString("%1 kb").arg(QString::number(sizeCount, 'f', 2));
-				}
-			}
-			else
-			{
-				strSize = QString("%1 bit").arg(QString::number(size));
-			}
-			pItem->setText(strSize);
+			pItem->setText(FileUtils::ins()->getFileSize(size));
 			pItem->setData(Qt::UserRole, size);
 			pItem->setTextAlignment(Qt::AlignRight);
 			ui.tableWidget->setItem(i++, 1, pItem);

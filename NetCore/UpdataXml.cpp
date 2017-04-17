@@ -69,7 +69,15 @@ bool UpdataXml::praseXmlFile(const QString& fileName)
 				QDomNodeList nodeList = parant.childNodes();
 				for (int i = 0; i < nodeList.size(); ++i)
 				{
-					readFileDom(nodeList.at(i).toElement());
+					FileList list;
+					QDomElement element = nodeList.at(i).toElement();
+
+					// 文件大小
+					list.m_fSize = element.attribute(g_strFileSize).toLongLong();
+					// 文件md5
+					list.m_strMd5 = element.attribute(g_strFileMd5);
+
+					m_mapFileList[element.attribute(g_strXmlFile)] = list;
 				}
 			}
 		}
@@ -111,17 +119,9 @@ bool UpdataXml::writeXmlFile(const QString& fileName, const QString& version,
 		QDomElement fileElem = document.createElement("file");
 		filesElem.appendChild(fileElem);
 
-		QDomElement fileName = document.createElement(g_strXmlFile);
-		fileElem.appendChild(fileName);
-		fileName.setAttribute(g_strXmlFile, iter->first);
-
-		QDomElement sizeElem = document.createElement(g_strFileSize);
-		fileElem.appendChild(sizeElem);
-		sizeElem.setAttribute(g_strFileSize, iter->second.m_fSize);
-
-		QDomElement md5Elem = document.createElement(g_strFileMd5);
-		fileElem.appendChild(md5Elem);
-		md5Elem.setAttribute(g_strFileMd5, iter->second.m_strMd5);
+		fileElem.setAttribute(g_strXmlFile, iter->first);
+		fileElem.setAttribute(g_strFileSize, iter->second.m_fSize);
+		fileElem.setAttribute(g_strFileMd5, iter->second.m_strMd5);
 	}
 
 	QTextStream out(&file);
@@ -144,37 +144,4 @@ QString UpdataXml::getVersion()
 QString UpdataXml::getLastError()
 {
 	return m_strError;
-}
-
-void UpdataXml::readFileDom(const QDomElement& parant)
-{
-	if (parant.isNull())
-	{
-		return;
-	}
-	FileList list;
-	QString strName;
-	QDomNodeList nodeList = parant.childNodes();
-	for (int i = 0; i < nodeList.size(); ++i)
-	{
-		QDomElement element = nodeList.at(i).toElement();
-		QString tag = element.tagName();
-		QString text = element.text();
-		if (element.tagName() == g_strXmlFile)
-		{
-			// 文件名
-			strName = element.text();
-		}
-		else if (element.tagName() == g_strFileSize)
-		{
-			// 文件大小
-			list.m_fSize = element.text().toFloat();
-		}
-		else if (element.tagName() == g_strFileMd5)
-		{
-			// 文件md5
-			list.m_strMd5 = element.text();
-		}
-	}
-	m_mapFileList[strName] = list;
 }

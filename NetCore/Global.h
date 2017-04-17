@@ -44,7 +44,7 @@ struct FileList
 		m_strMd5.clear();
 	}
 
-	float m_fSize;
+	qint64 m_fSize;
 	QString m_strMd5;
 };
 

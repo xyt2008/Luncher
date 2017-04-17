@@ -18,6 +18,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>IP</string>
        </property>
@@ -25,6 +31,12 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEditIp">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>192.168.3.108</string>
        </property>
@@ -32,6 +44,12 @@
      </item>
      <item>
       <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>端口号</string>
        </property>
@@ -39,6 +57,12 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEditPort">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>24732</string>
        </property>
@@ -46,6 +70,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonConn">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>连接</string>
        </property>
@@ -70,7 +100,14 @@
     <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QTextEdit" name="textEdit"/>
+       <widget class="QTextEdit" name="textEdit">
+        <property name="font">
+         <font>
+          <family>微软雅黑</family>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -85,6 +122,12 @@
          <height>0</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>0/1</string>
        </property>
@@ -92,6 +135,12 @@
      </item>
      <item>
       <widget class="QProgressBar" name="progressBar">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="styleSheet">
         <string notr="true">QProgressBar{
 border:none;
@@ -111,6 +160,12 @@ border-radius:3px;
      </item>
      <item>
       <widget class="QPushButton" name="pushButton">
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>检查更新</string>
        </property>

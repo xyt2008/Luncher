@@ -5,12 +5,14 @@
 #include "NetCore/UpdataXml.h"
 #include "NetCore/SingleTon.h"
 #include "NetCore/FileUtils.h"
+#include "DownLoad.h"
 
 Luncher::Luncher(QWidget *parent, Qt::WFlags flags)
 	: QDialog(parent, flags)
 {
 	ui.setupUi(this);
 
+	m_pDownLoad = 0;
 	m_pClient = new Client;
 	m_pClient->setSocket(new QTcpSocket);
 
@@ -37,9 +39,23 @@ void Luncher::slotConnectToServer()
 
 void Luncher::slotCheckeUpdate()
 {
-	// 检查更新，下载更新列表文件
-	m_pClient->getFile("updatalist.xml");
-	SingleTon<UpdataXml>::ins()->praseXmlFile(FileUtils::ins()->getApplicationPath("updatalist.xml"));
+	QString strText = ui.pushButton->text();
+	if (strText == QString::fromLocal8Bit("检查更新"))
+	{
+		// 检查更新，下载更新列表文件
+		m_pClient->getFile("updatalist.xml");
+		SingleTon<UpdataXml>::ins()->praseXmlFile(FileUtils::ins()->getApplicationPath("updatalist.xml"));
+	}
+	else if (strText == QString::fromLocal8Bit("下载"))
+	{
+		// 开始下载，一次下载5个
+		if (m_pDownLoad == 0)
+		{
+			m_pDownLoad = new DownLoad;
+		}
+		m_pDownLoad->setDownLoadList(m_mapUpdateList);
+		m_pDownLoad->start(ui.lineEditIp->text(), ui.lineEditPort->text().toInt());
+	}
 }
 
 void Luncher::slotFinishedDownFile(const QString& file)
@@ -60,6 +76,7 @@ void Luncher::slotFinishedDownFile(const QString& file)
 		QString strFile = FileUtils::ins()->getApplicationPath("updatalist.xml");
 		if (QFile::exists(strFile + ".temp"))
 		{
+			QFile::remove(strFile + ".old");
 			QFile::rename(strFile, strFile + ".old");
 			QFile::rename(strFile + ".temp", strFile);
 		}
@@ -87,34 +104,27 @@ void Luncher::slotFinishedDownFile(const QString& file)
 					{
 						// 两个文件相同，不用下载了，从列表中删除
 						mapOld.erase(iterOld);
-						mapNew.erase(iter++);
+						++iter;
 						continue;
 					}
 				}
 
 				m_mapUpdateList.insert(*iter);
 				m_iTotalSize += iter->second.m_fSize;
-				mapNew.erase(iter++);
+				++iter;
 			}
 
-			// 遍历结束，mapNew中剩余的需要下载，mapOld中剩余的需要删除
-			for (iter = mapOld.begin(); iter != mapNew.end(); ++iter)
-			{
-				m_mapUpdateList.insert(*iter);
-				m_iTotalSize += iter->second.m_fSize;
-			}
-
+			// 遍历结束，mapOld中剩余的需要删除
 			for (iterOld = mapOld.begin(); iterOld != mapOld.end(); ++iterOld)
 			{
 				QFile::remove(FileUtils::ins()->getScenePath(iterOld->first));
 			}
 
-			QString str = QString("%1/%2").arg(QString::number(m_iReciveSize))
-				.arg(QString::number(m_iTotalSize));
+			QString str = QString("0/%2")
+				.arg(FileUtils::ins()->getFileSize(m_iTotalSize));
 			ui.labelPro->setText(str);
 
-			// 开始下载，一次下载5个
-			downloadFile(5);
+			ui.pushButton->setText(QString::fromLocal8Bit("下载"));
 		}
 		else
 		{
@@ -130,8 +140,4 @@ void Luncher::slotReceiveSize(qint64 size)
 
 void Luncher::downloadFile(int count)
 {
-	int thredCount = count > m_mapUpdateList.size() ? m_mapUpdateList.size() : count;
-	for (int i = 0; i < thredCount; ++i)
-	{
-	}
 }

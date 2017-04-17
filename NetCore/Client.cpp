@@ -77,17 +77,11 @@ void Client::slotReadRady()
 			qint64 count = m_pFileRead->write(baData);
 			m_iReceiveSize += count;
 			emit signalReceiveSize(count);
-		}
 
-		if (m_iReceiveSize >= m_iTotalSize)
-		{
-			m_pFileRead->close();
-			m_pFileRead = 0;
-			m_iTotalSize = 0;
-			m_bIsHeadMsg = false;
-			emit signalFinishedDownloadFile(m_strFileName);
-			m_strFileName.clear();
-			m_enState = Conn_End;
+			if (m_iReceiveSize >= m_iTotalSize)
+			{
+				downLoadFinished();
+			}
 		}
 	}
 }
@@ -97,23 +91,26 @@ void Client::slotWritten(qint64 byte)
 	// 已经发送数据的大小
 	m_iWrittenSize += (int)byte;
 
-	if(m_iToWriteSize > 0)
+	if (m_iTotalSize > 0)
 	{
-		// 每次发送m_iPageSize大小的数据，这里设置为8KB，如果剩余的数据不足8KB，
-		// 发送完一次数据后还剩余数据的大小
-		m_iToWriteSize -= (int)m_pSocket->write(m_pFileWrite->read(qMin(m_iToWriteSize, m_iPageSize)));
-	}
+		if(m_iToWriteSize > 0)
+		{
+			// 每次发送m_iPageSize大小的数据，这里设置为8KB，如果剩余的数据不足8KB，
+			// 发送完一次数据后还剩余数据的大小
+			m_iToWriteSize -= (int)m_pSocket->write(m_pFileWrite->read(qMin(m_iToWriteSize, m_iPageSize)));
+		}
 
-	if(m_iWrittenSize == m_iTotalSize)
-	{
-		//发送完毕
-		m_iTotalSize = 0;
-		m_iWrittenSize = 0;
-		m_iToWriteSize = 0;
-		m_pFileWrite->close();
-		m_pFileWrite = 0;
+		if(m_iWrittenSize >= m_iTotalSize)
+		{
+			//发送完毕
+			m_iTotalSize = 0;
+			m_iWrittenSize = 0;
+			m_iToWriteSize = 0;
+			m_pFileWrite->close();
+			m_pFileWrite = 0;
 
-		m_enState = Conn_End;
+			m_enState = Conn_End;
+		}
 	}
 }
 
@@ -165,7 +162,8 @@ void Client::getFile(const QString& file)
 								.arg(QString(g_strPull)).arg(QString(g_strFile))
 								.arg(QString(g_strValue)).arg(file);
 
-	m_pSocket->write(strContent.toLocal8Bit().data());
+	int state =  m_pSocket->state();
+	qint64 len =  m_pSocket->write(strContent.toLocal8Bit().data());
 	m_enState = Conn_Read;
 }
 
@@ -246,14 +244,8 @@ void Client::dispatchHead(const QByteArray& baData)
 					emit signalReceiveSize(count);
 					if (m_iReceiveSize >= m_iTotalSize)
 					{
-						m_pFileRead->close();
-						m_pFileRead = 0;
-						m_iTotalSize = 0;
 						m_bIsHeadMsg = false;
-						emit signalFinishedDownloadFile(m_strFileName);
-						m_strFileName.clear();
-
-						m_enState = Conn_End;
+						downLoadFinished();
 						return;
 					}
 				}
@@ -296,4 +288,20 @@ void Client::dispatchHead(const QByteArray& baData)
 	}
 
 	m_bIsHeadMsg = true;
+}
+
+void Client::downLoadFinished()
+{
+	m_pFileRead->close();
+	m_pFileRead = 0;
+	m_iTotalSize = 0;
+	m_iReceiveSize = 0;
+
+	// 更改文件名称，去掉.temp
+	QString strFile = FileUtils::ins()->getScenePath(m_strFileName);
+	QFile::rename(strFile + ".temp", strFile);
+
+	m_enState = Conn_End;
+
+	emit signalFinishedDownloadFile(m_strFileName);
 }

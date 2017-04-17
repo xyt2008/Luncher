@@ -40,18 +40,26 @@ public:
 	void initScene(const QString& name);
 
 	/*
-	 * @return name:应用程序目录
+	 * @param name:应用程序目录
 	 * @see    FileUtils:getScenePath
 	 * @note   获取应用程序所在的目录
 	 */
 	QString getApplicationPath(const QString& name);
 
 	/*
-	 * @return name:场景目录
+	 * @param name:场景目录
 	 * @see    FileUtils:getApplicationPath
 	 * @note   获取场景所在的目录
 	 */
 	QString getScenePath(const QString& name);
+
+	/*
+	 * @param  szie:文件实际大小，bit数
+	 * @return QString:文件显示大小
+	 * @see    
+	 * @note   获取文件显示大小，合适用户看的
+	 */
+	QString getFileSize(qint64 size);
 
 private:
 	FileUtils();
