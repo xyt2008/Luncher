@@ -6,6 +6,7 @@
 #include "NetCore/SingleTon.h"
 #include "NetCore/FileUtils.h"
 #include "DownLoad.h"
+#include "DownThread.h"
 
 Luncher::Luncher(QWidget *parent, Qt::WFlags flags)
 	: QDialog(parent, flags)
@@ -49,12 +50,14 @@ void Luncher::slotCheckeUpdate()
 	else if (strText == QString::fromLocal8Bit("下载"))
 	{
 		// 开始下载，一次下载5个
-		if (m_pDownLoad == 0)
+		if (m_mapUpdateList.size() > 0)
 		{
-			m_pDownLoad = new DownLoad;
+			DownThread* pThread = new DownThread(new QTcpSocket);
+			pThread->m_Socket.connectToHost(ui.lineEditIp->text(), ui.lineEditPort->text().toInt());
+			connect(pThread, SIGNAL(finished()), pThread, SLOT(deleteLater()));
+			pThread->setDownLoadList(m_mapUpdateList);
+			pThread->start();
 		}
-		m_pDownLoad->setDownLoadList(m_mapUpdateList);
-		m_pDownLoad->start(ui.lineEditIp->text(), ui.lineEditPort->text().toInt());
 	}
 }
 
@@ -130,6 +133,10 @@ void Luncher::slotFinishedDownFile(const QString& file)
 		{
 			// 已经最新，不需要更新
 		}
+	}
+	else
+	{
+
 	}
 }
 

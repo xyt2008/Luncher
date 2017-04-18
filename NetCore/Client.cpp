@@ -44,7 +44,11 @@ ConnState Client::getState()
 
 void Client::connectToHost(const QString& addr, int port)
 {
-	if (!addr.isEmpty() && m_pSocket != 0)
+	if (m_pSocket == 0 || m_enState == Conn_DisConn)
+	{
+		setSocket(new QTcpSocket);
+	}
+	if (!addr.isEmpty())
 	{
 		m_pSocket->connectToHost(QHostAddress(addr), port);
 	}
@@ -61,6 +65,7 @@ void Client::slotDisConnect()
 	m_pSocket->close();
 	emit signalMessage(QString::fromLocal8Bit("客户端断开"));
 	m_pSocket->deleteLater();
+	m_pSocket == 0;
 }
 
 void Client::slotReadRady()
@@ -299,9 +304,12 @@ void Client::downLoadFinished()
 
 	// 更改文件名称，去掉.temp
 	QString strFile = FileUtils::ins()->getScenePath(m_strFileName);
+	QFile::remove(strFile);
 	QFile::rename(strFile + ".temp", strFile);
 
 	m_enState = Conn_End;
 
-	emit signalFinishedDownloadFile(m_strFileName);
+	QString strRet = m_strFileName;
+	m_strFileName.clear();
+	emit signalFinishedDownloadFile(strRet);
 }

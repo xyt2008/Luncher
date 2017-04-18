@@ -16,10 +16,18 @@ ConnThread::~ConnThread()
 
 void ConnThread::run()
 {
-	ConnState state = Conn_End;
-	while(state != m_Socket.getState())
+	ConnState state;
+	while(true)
 	{
-		continue;
+		state = m_Socket.getState();
+		if (Conn_DisConn == state)
+		{
+			break;
+		}
+		else
+		{
+			continue;
+		}
 	}
 }
 

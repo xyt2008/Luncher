@@ -21,7 +21,7 @@ public:
 	DownThread(QTcpSocket* socket, QObject *parent = 0);
 	virtual ~DownThread();
 
-	void setDownloadFile(const QString& filePath);
+	void setDownLoadList(const std::map<QString, FileList>& mapUpdateList);
 
 protected:
 	virtual void run();
@@ -29,6 +29,7 @@ protected:
 private slots:
 	void slotError(QTcpSocket::SocketError socketError);
 	void slotMessage(const QString& strMsg);
+	void slotFinishedDownFile(const QString& file);
 
 signals:
 	void signalError(QTcpSocket::SocketError socketError);
@@ -36,7 +37,8 @@ signals:
 
 public:
 	Client m_Socket;
-	QString m_strFilePath;
+	bool m_bIsFinished;
+	std::map<QString, FileList> m_mapUpdateList;
 };
 
 #endif // DOWNTHREAD_H

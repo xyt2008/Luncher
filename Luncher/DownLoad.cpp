@@ -47,7 +47,7 @@ void DownLoad::doThread()
 		pThread->m_Socket.connectToHost(m_strIp, m_iPort);
 		connect(&pThread->m_Socket, SIGNAL(signalFinishedDownloadFile(const QString&)), this, SLOT(slotFinishedDownFile(const QString&)));
 		connect(pThread, SIGNAL(finished()), pThread, SLOT(deleteLater()));
-		pThread->setDownloadFile(m_mapUpdateList.begin()->first);
+		pThread->setDownLoadList(m_mapUpdateList);
 		m_mapUpdateList.erase(m_mapUpdateList.begin());
 		pThread->start();
 	}
